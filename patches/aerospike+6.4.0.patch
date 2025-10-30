@@ -1,0 +1,22 @@
+diff --git a/node_modules/aerospike/typings/index.d.ts b/node_modules/aerospike/typings/index.d.ts
+index fdd5cd6..1c9bafc 100644
+--- a/node_modules/aerospike/typings/index.d.ts
++++ b/node_modules/aerospike/typings/index.d.ts
+@@ -295,7 +295,7 @@ export class AerospikeRecord<B extends AerospikeBins = AerospikeBins> {
+      *
+      * @type {AerospikeBins}
+      */
+-    public bins: AerospikeRecord<B>;
++    public bins: B;
+ 
+     /**
+      * The record's remaining time-to-live in seconds before it expires.
+@@ -832,7 +832,7 @@ export class BatchResult<B extends AerospikeBins = AerospikeBins> {
+      * Record result for the requested key. This record will only be populated when the result is
+      * {@link statusNamespace.AEROSPIKE_OK|AEROSPIKE_OK} or {@link statusNamespace.AEROSPIKE_ERR_UDF|AEROSPIKE_ERR_UDF}.
+      */
+-    record: B;
++    record: AerospikeRecord<B>;
+     /**
+      * It is possible that a write command completed even though the client
+      * returned this error. This may be the case when a client error occurs
