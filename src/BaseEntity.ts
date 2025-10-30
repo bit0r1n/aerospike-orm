@@ -1,5 +1,5 @@
 import { AerospikeBins } from 'aerospike'
-import { getBinMetadata } from './decorators'
+import { DefaultBinBuilder, getBinMetadata } from './decorators'
 
 export class BaseEntity {
   public id: string | number
@@ -17,7 +17,9 @@ export class BaseEntity {
       let value = (this as any)[propertyKey]
 
       if (value === undefined && options.default !== undefined) {
-        value = options.default
+        value = typeof options.default === 'function'
+          ? (options.default as DefaultBinBuilder)()
+          : options.default
       }
 
       if (options.required && (value === undefined || value === null)) {

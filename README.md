@@ -126,7 +126,7 @@ export interface GetAllOptions {
 
 ### `@Bin(name?: string, options?: BinOptions)`
 ### `BinOptions`
-| Property   | Type                          | Default     | Description                                                          |
-| ---------- |-------------------------------| ----------- | -------------------------------------------------------------------- |
-| `required` | `boolean`                     | `false`     | If `true`, throws an error when the property is missing before saving |
-| `default`  | `Aerospike.AerospikeBinValue` | `undefined` | Default value assigned when the property is `undefined`              |
+| Property   | Type                                                               | Default | Description                                                          |
+| ---------- |--------------------------------------------------------------------|---------| -------------------------------------------------------------------- |
+| `required` | `boolean`                                                          | `false` | If `true`, throws an error when the property is missing before saving |
+| `default`  | `Aerospike.AerospikeBinValue \| () => Aerospike.AerospikeBinValue` | `undefined` | Default value assigned when the property is `undefined`              |

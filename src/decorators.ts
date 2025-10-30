@@ -2,9 +2,11 @@ import { AerospikeBinValue } from 'aerospike'
 
 const BinMetadataKey = Symbol('aerospike:bin')
 
+export type DefaultBinBuilder = () => AerospikeBinValue
+
 export interface BinOptions {
   required?: boolean
-  default?: AerospikeBinValue
+  default?: DefaultBinBuilder | AerospikeBinValue
 }
 
 export interface BinMetadata {
