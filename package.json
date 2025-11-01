@@ -1,6 +1,6 @@
 {
   "name": "aerospike-orm",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "types": "./types/index.d.ts",
   "scripts": {
@@ -8,7 +8,10 @@
     "lint": "eslint . --fix",
     "postinstall": "npm run build"
   },
-  "keywords": ["aerospike", "orm"],
+  "keywords": [
+    "aerospike",
+    "orm"
+  ],
   "author": "bit0r1n",
   "license": "MIT",
   "description": "Aerospike ORM for NodeJS",
