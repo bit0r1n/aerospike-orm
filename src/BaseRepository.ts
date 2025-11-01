@@ -13,13 +13,9 @@ export interface GetAllOptions {
 }
 
 export class BaseRepository<T extends BaseEntity> {
-  protected readonly client: AerospikeClient
-  protected readonly namespace: string
-  protected readonly setName: string
-
-  static getSetName(): string {
-    throw new Error('Method not implemented')
-  }
+  public readonly client: AerospikeClient
+  public readonly namespace: string
+  public readonly setName: string
 
   constructor(client: AerospikeClient, namespace: string, setName: string) {
     this.client = client
@@ -99,6 +95,11 @@ export class BaseRepository<T extends BaseEntity> {
     }
 
     return entities
+  }
+
+  async deleteByIds(ids: (string | number)[]) {
+    await this.client.batchRemove(ids.map((id) =>
+      new Key(this.namespace, this.setName, id)))
   }
 
   async getAll(options?: GetAllOptions): Promise<T[]> {

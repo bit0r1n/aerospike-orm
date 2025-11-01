@@ -30,18 +30,14 @@ class User extends BaseEntity {
   @Bin('username', { required: true })
   public name!: string
 
-  @Bin('email')
+  @Bin()
   public email?: string
 
   @Bin('age', { default: 18 })
-  public age!: number
+  public age?: number
 }
 
 class UserRepository extends BaseRepository<User> {
-  static getSetName(): string {
-    return 'users'
-  }
-
   protected instantiate(bins: AerospikeBins): User {
     return User.fromRecord(bins)
   }
@@ -91,28 +87,29 @@ main().catch(console.error)
 ## Methods
 
 ### `BaseEntity`
-| Property | Type               | Description                                                                                     |
-| -------- | ------------------ |-------------------------------------------------------------------------------------------------|
+| Property | Type               | Description                                                                                 |
+|----------|--------------------|---------------------------------------------------------------------------------------------|
 | `id`     | `string \| number` | A unique identifier for the entity (used as Aerospike record key). Required in all entities |
 
-| Method                                                                                 | Description                                             |
-| -------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `toRecord(): AerospikeBins`                                                            | Serializes the entity to an Aerospike record (bins)     |
+| Method                                                                                 | Description                                              |
+|----------------------------------------------------------------------------------------|----------------------------------------------------------|
+| `toRecord(): AerospikeBins`                                                            | Serializes the entity to an Aerospike record (bins)      |
 | `static fromRecord<T extends typeof BaseEntity>(bins: AerospikeBins): InstanceType<T>` | Deserializes an Aerospike record into an entity instance |
 
 ### `BaseRepository<T extends BaseEntity>`
-| Method                                                             | Description                                                   |
-| ------------------------------------------------------------------ | ------------------------------------------------------------- |
-| `get(id: string \| number): Promise<T \| null>`                    | Retrieves an entity by ID. Returns `null` if not found        |
+| Method                                                             | Description                                                        |
+|--------------------------------------------------------------------|--------------------------------------------------------------------|
+| `get(id: string \| number): Promise<T \| null>`                    | Retrieves an entity by ID. Returns `null` if not found             |
 | `getOrCreate(id: string \| number, data?: Partial<T>): Promise<T>` | Retrieves an entity by ID or creates it with optional default data |
-| `exists(id: string \| number): Promise<boolean>`                   | Checks if a record exists                                     |
-| `save(entity: T): Promise<void>`                                   | Saves (inserts or updates) an entity                          |
-| `delete(id: string \| number): Promise<void>`                      | Deletes an entity by ID                                       |
-| `getByIds(ids: (string \| number)[]): Promise<T[]>`                | Retrieves multiple entities by their IDs using batch read     |
-| `getAll(options?: GetAllOptions): Promise<T[]>`                    | Retrieves all entities, optionally with query/stream options. |
+| `exists(id: string \| number): Promise<boolean>`                   | Checks if a record exists                                          |
+| `save(entity: T): Promise<void>`                                   | Saves (inserts or updates) an entity                               |
+| `delete(id: string \| number): Promise<void>`                      | Deletes an entity by ID                                            |
+| `getByIds(ids: (string \| number)[]): Promise<T[]>`                | Retrieves multiple entities by their IDs using batchRead           |
+| `deleteByIds(ids: (string \| number)[]): Promise<void>`            | Delete multiple entities by their IDs using batchRemove            |
+| `getAll(options?: GetAllOptions): Promise<T[]>`                    | Retrieves all entities, optionally with query/stream options       |
 
 ### `GetAllOptions`
-Interface used by the getAll() method to control query behavior.
+Interface used by the getAll() method to control query behavior
 ```ts
 export interface GetAllOptions {
   query?: Aerospike.QueryOptions
@@ -126,7 +123,7 @@ export interface GetAllOptions {
 
 ### `@Bin(name?: string, options?: BinOptions)`
 ### `BinOptions`
-| Property   | Type                                                               | Default | Description                                                          |
-| ---------- |--------------------------------------------------------------------|---------| -------------------------------------------------------------------- |
-| `required` | `boolean`                                                          | `false` | If `true`, throws an error when the property is missing before saving |
-| `default`  | `Aerospike.AerospikeBinValue \| () => Aerospike.AerospikeBinValue` | `undefined` | Default value assigned when the property is `undefined`              |
+| Property   | Type                                                               | Default     | Description                                                           |
+|------------|--------------------------------------------------------------------|-------------|-----------------------------------------------------------------------|
+| `required` | `boolean`                                                          | `false`     | If `true`, throws an error when the property is missing before saving |
+| `default`  | `Aerospike.AerospikeBinValue \| () => Aerospike.AerospikeBinValue` | `undefined` | Default value assigned when the property is `undefined`               |
