@@ -1,6 +1,4 @@
 .idea
 node_modules
 src
-.DS_Store
 eslint.config.mjs
-README.md

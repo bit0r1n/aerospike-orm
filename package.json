@@ -5,8 +5,7 @@
   "types": "./types/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint . --fix",
-    "postinstall": "npm run build"
+    "lint": "eslint . --fix"
   },
   "keywords": [
     "aerospike",
