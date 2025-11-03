@@ -43,21 +43,23 @@ class UserRepository extends BaseRepository<User> {
   }
 }
 
+const client = new AerospikeClient({ hosts: '127.0.0.1:3000' })
+
 async function main() {
-  const client = await AerospikeClient.connect({ hosts: '127.0.0.1:3000' })
+  await client.connect()
+
   const repo = new UserRepository(client, 'test', 'users')
 
   // Create or get user
   const user = await repo.getOrCreate('user1', { name: 'Cool Name' })
 
   // Update
-  user.age = 25
-  await repo.save(user)
+  await repo.update(user.id, { age: 25, email: 'user@email.com' })
 
   // Fetch
   const fetched = await repo.get('user1')
 
-  // Create user with saving
+  // Create user entity and save
   const extraUser = new User('user2')
   extraUser.name = 'Coolest'
   await repo.save(extraUser)
@@ -68,18 +70,15 @@ async function main() {
   // Get users with stream filter (expression)
   const coolestNameUsers = await repo.getAll({
     stream: {
-      exp: exp.eq(exp.binStr('username'), exp.str('Coolest'))
+      filterExpression: exp.eq(exp.binStr('username'), exp.str('Coolest'))
     }
   })
 
   // Delete
-  await repo.delete('user1')
-  await repo.delete(extraUser.id)
-
-  await client.close()
+  await repo.deleteMany([ 'user1', extraUser.id ])
 }
 
-main().catch(console.error)
+main().catch(console.error).finally(() => client.close())
 ```
 
 ---
@@ -99,14 +98,15 @@ main().catch(console.error)
 ### `BaseRepository<T extends BaseEntity>`
 | Method                                                             | Description                                                        |
 |--------------------------------------------------------------------|--------------------------------------------------------------------|
+| `save(entity: T): Promise<void>`                                   | Saves (inserts or updates) an entity                               |
 | `get(id: string \| number): Promise<T \| null>`                    | Retrieves an entity by ID. Returns `null` if not found             |
 | `getOrCreate(id: string \| number, data?: Partial<T>): Promise<T>` | Retrieves an entity by ID or creates it with optional default data |
-| `exists(id: string \| number): Promise<boolean>`                   | Checks if a record exists                                          |
-| `save(entity: T): Promise<void>`                                   | Saves (inserts or updates) an entity                               |
-| `delete(id: string \| number): Promise<void>`                      | Deletes an entity by ID                                            |
-| `getByIds(ids: (string \| number)[]): Promise<T[]>`                | Retrieves multiple entities by their IDs using batchRead           |
-| `deleteByIds(ids: (string \| number)[]): Promise<void>`            | Delete multiple entities by their IDs using batchRemove            |
+| `getMany(ids: (string \| number)[]): Promise<T[]>`                 | Retrieves multiple entities by their IDs using batchRead           |
 | `getAll(options?: GetAllOptions): Promise<T[]>`                    | Retrieves all entities, optionally with query/stream options       |
+| `exists(id: string \| number): Promise<boolean>`                   | Checks if a record exists                                          |
+| `update(id: string \| number, data: Partial<T>): Promise<void>`    | Partially updates a record, modifying only the provided fields     |
+| `delete(id: string \| number): Promise<void>`                      | Deletes an entity by ID                                            |
+| `deleteMany(ids: (string \| number)[]): Promise<void>`             | Delete multiple entities by their IDs using batchRemove            |
 
 ### `GetAllOptions`
 Interface used by the getAll() method to control query behavior
