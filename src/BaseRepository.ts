@@ -114,7 +114,7 @@ export class BaseRepository<T extends BaseEntity> {
       const binMetadata = metadata.find((m) => m.propertyKey === propertyKey)
       if (binMetadata) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        writeBins[binMetadata.binName] = value
+        writeBins[binMetadata.binName] = value ?? null
       }
     }
 
